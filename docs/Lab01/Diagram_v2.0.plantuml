@@ -1,0 +1,90 @@
+@startuml
+
+!theme plain
+top to bottom direction
+skinparam linetype ortho
+
+class AbstractRepository<ID, E>
+enum CategorieBautura << enumeration >>
+class CsvExporter
+class DailyReportService
+class DrinkShopApp
+class DrinkShopController
+class DrinkShopService
+class FileAbstractRepository<ID, E>
+class FileOrderRepository
+class FileProductRepository
+class FileRetetaRepository
+class FileStocRepository
+class IngredientReteta
+class Order
+class OrderItem
+class OrderItemValidator
+class OrderService
+class OrderValidator
+class Product
+class ProductService
+class ProductValidator
+class ReceiptGenerator
+interface Repository<ID, E> << interface >>
+class Reteta
+class RetetaService
+class RetetaValidator
+class Stoc
+class StocService
+class StocValidator
+enum TipBautura << enumeration >>
+class ValidationException
+interface Validator<T> << interface >>
+
+' Relatii de mostenire Repository
+AbstractRepository      -[#008200,dashed]-^  Repository
+FileAbstractRepository  -[#000082,plain]-^  AbstractRepository
+FileOrderRepository     -[#000082,plain]-^  FileAbstractRepository
+FileProductRepository   -[#000082,plain]-^  FileAbstractRepository
+FileRetetaRepository    -[#000082,plain]-^  FileAbstractRepository
+FileStocRepository      -[#000082,plain]-^  FileAbstractRepository
+
+' Relatii intre Repository-uri specifice si alte repo-uri (ex: OrderRepo are nevoie de ProductRepo)
+FileOrderRepository    "1" *-[#595959,plain]-> "productRepository\n1" Repository
+
+' Relatii Service - Repository
+OrderService           "1" *-[#595959,plain]-> "orderRepo\n1" Repository
+ProductService         "1" *-[#595959,plain]-> "productRepo\n1" Repository
+RetetaService          "1" *-[#595959,plain]-> "retetaRepo\n1" Repository
+StocService            "1" *-[#595959,plain]-> "stocRepo\n1" Repository
+
+' CORECTIE A2: Conectarea claselor utilitare la servicii
+DailyReportService     "1" *-[#595959,plain]-> "exporter\n1" CsvExporter
+OrderService           "1" *-[#595959,plain]-> "receiptGen\n1" ReceiptGenerator
+
+' CORECTIE A3: DailyReportService foloseste OrderService pentru date, nu Repository direct
+DailyReportService     "1" *-[#595959,plain]-> "orderService\n1" OrderService
+
+' CORECTIE A3: DrinkShopService (Facade) coordoneaza celelalte servicii
+DrinkShopService       "1" *-[#595959,plain]-> "reportService\n1" DailyReportService
+DrinkShopService       "1" *-[#595959,plain]-> "orderService\n1" OrderService
+DrinkShopService       "1" *-[#595959,plain]-> "productService\n1" ProductService
+DrinkShopService       "1" *-[#595959,plain]-> "retetaService\n1" RetetaService
+DrinkShopService       "1" *-[#595959,plain]-> "stocService\n1" StocService
+
+' CORECTIE A4: Controller comunica DOAR cu Service-ul principal (Facade), nu cu entitatile direct
+DrinkShopController    "1" *-[#595959,plain]-> "service\n1" DrinkShopService
+
+' Relatii intre Entitati
+Order                  "1" *-[#595959,plain]-> "items\n*" OrderItem
+OrderItem              "1" *-[#595959,plain]-> "product\n1" Product
+Product                "1" *-[#595959,plain]-> "categorie\n1" CategorieBautura
+Product                "1" *-[#595959,plain]-> "tip\n1" TipBautura
+Reteta                 "1" *-[#595959,plain]-> "ingrediente\n*" IngredientReteta
+
+' Validatoare
+OrderItemValidator      -[#008200,dashed]-^  Validator
+OrderValidator         "1" *-[#595959,plain]-> "itemValidator\n1" OrderItemValidator
+OrderValidator          -[#008200,dashed]-^  Validator
+ProductValidator        -[#008200,dashed]-^  Validator
+RetetaValidator         -[#008200,dashed]-^  Validator
+StocValidator           -[#008200,dashed]-^  Validator
+
+' CORECTIE A1: Eliminarea clasei ProductTest din diagrama
+@enduml

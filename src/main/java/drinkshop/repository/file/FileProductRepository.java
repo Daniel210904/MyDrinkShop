@@ -7,6 +7,15 @@ import drinkshop.domain.TipBautura;
 public class FileProductRepository
         extends FileAbstractRepository<Integer, Product> {
 
+    // C11: Errors are made in writing out variable names (Magic Numbers)
+    // Observatie: Folosim constante pentru a clarifica semnificatia indicilor CSV
+    private static final int IDX_ID = 0;
+    private static final int IDX_NAME = 1;
+    private static final int IDX_PRICE = 2;
+    private static final int IDX_CATEGORY = 3;
+    private static final int IDX_TYPE = 4;
+    private static final int EXPECTED_COLUMNS = 5;
+
     public FileProductRepository(String fileName) {
         super(fileName);
         loadFromFile();
@@ -22,13 +31,26 @@ public class FileProductRepository
 
         String[] elems = line.split(",");
 
-        int id = Integer.parseInt(elems[0]);
-        String name = elems[1];
-        double price = Double.parseDouble(elems[2]);
-        CategorieBautura categorie = CategorieBautura.valueOf(elems[3]);
-        TipBautura tip = TipBautura.valueOf(elems[4]);
+        // C06: There are errors in preparing or processing input data
+        // Observatie: Validam datele de intrare pentru a preveni crash-uri pe linii incomplete
+        if (elems.length < EXPECTED_COLUMNS) {
+            System.err.println("Linie invalida ignorata: " + line);
+            return null; // Sau aruncam exceptie, depinde de politica de erori
+        }
 
-        return new Product(id, name, price, categorie, tip);
+        try {
+            int id = Integer.parseInt(elems[IDX_ID]);
+            String name = elems[IDX_NAME];
+            double price = Double.parseDouble(elems[IDX_PRICE]);
+            CategorieBautura categorie = CategorieBautura.valueOf(elems[IDX_CATEGORY]);
+            TipBautura tip = TipBautura.valueOf(elems[IDX_TYPE]);
+
+            return new Product(id, name, price, categorie, tip);
+        } catch (IllegalArgumentException e) {
+            // C08: Error message processing errors exist (Gestionare locala)
+            System.err.println("Eroare la parsarea produsului: " + line);
+            return null;
+        }
     }
 
     @Override

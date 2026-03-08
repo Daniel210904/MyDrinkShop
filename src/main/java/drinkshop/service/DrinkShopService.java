@@ -83,6 +83,12 @@ public class DrinkShopService {
     public void comandaProdus(Product produs) {
         Reteta reteta = retetaService.findById(produs.getId());
 
+        // C01: Decision logic is erroneous or inadequate
+        // Observatie: Validam daca reteta exista inainte de a o folosi pentru a evita NullPointerException
+        if (reteta == null) {
+            throw new IllegalStateException("Nu exista reteta definita pentru produsul: " + produs.getNume());
+        }
+
         if (!stocService.areSuficient(reteta)) {
             throw new IllegalStateException("Stoc insuficient pentru produsul: " + produs.getNume());
         }

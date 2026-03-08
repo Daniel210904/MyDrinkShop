@@ -9,9 +9,8 @@ public abstract class FileAbstractRepository<ID, E>
 
     protected String fileName;
 
-    public FileAbstractRepository(String fileName) {
+    protected FileAbstractRepository(String fileName) {
         this.fileName = fileName;
-        //loadFromFile();
     }
 
     protected void loadFromFile() {
@@ -24,7 +23,9 @@ public abstract class FileAbstractRepository<ID, E>
             }
 
         } catch (IOException e) {
-            e.printStackTrace();
+            // C08: Error message processing errors exist
+            // Observatie: Inlocuim printStackTrace cu o exceptie care propaga eroarea critică
+            throw new RuntimeException("Eroare critica la citirea fisierului: " + fileName, e);
         }
     }
 
@@ -37,7 +38,8 @@ public abstract class FileAbstractRepository<ID, E>
             }
 
         } catch (IOException e) {
-            e.printStackTrace();
+            // C08: Error message processing errors exist
+            throw new RuntimeException("Eroare critica la scrierea in fisierul: " + fileName, e);
         }
     }
 
