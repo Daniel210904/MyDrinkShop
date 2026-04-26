@@ -6,7 +6,6 @@ import drinkshop.domain.Stoc;
 import drinkshop.repository.Repository;
 
 import java.util.List;
-import java.util.Map;
 
 public class StocService {
 
@@ -52,6 +51,14 @@ public class StocService {
     }
 
     public void consuma(Reteta reteta) {
+        if (reteta == null) {
+            throw new IllegalArgumentException("Rețeta nu poate fi null.");
+        }
+
+        if (reteta.getIngrediente() == null || reteta.getIngrediente().isEmpty()) {
+            return;
+        }
+
         if (!areSuficient(reteta)) {
             throw new IllegalStateException("Stoc insuficient pentru rețeta.");
         }
@@ -70,7 +77,7 @@ public class StocService {
                 if (ramas <= 0) break;
 
                 double deScazut = Math.min(s.getCantitate(), ramas);
-                s.setCantitate((int)(s.getCantitate() - deScazut));
+                s.setCantitate((int) (s.getCantitate() - deScazut));
                 ramas -= deScazut;
 
                 stocRepo.update(s);
