@@ -33,15 +33,17 @@ public class FileOrderRepository
         int id = Integer.parseInt(parts[0]);
 
         List<OrderItem> items = new ArrayList<>();
-        String[] products = parts[1].split("\\|");
+        if (!parts[1].isEmpty()) {
+            String[] products = parts[1].split("\\|");
 
-        for (String product : products) {
-            String[] prodParts = product.split(":");
+            for (String product : products) {
+                String[] prodParts = product.split(":");
 
-            int productId = Integer.parseInt(prodParts[0]);
-            int quantity = Integer.parseInt(prodParts[1]);
+                int productId = Integer.parseInt(prodParts[0]);
+                int quantity = Integer.parseInt(prodParts[1]);
 
-            items.add(new OrderItem(productRepository.findOne(productId), quantity));
+                items.add(new OrderItem(productRepository.findOne(productId), quantity));
+            }
         }
 
         double totalPrice = Double.parseDouble(parts[2]);
