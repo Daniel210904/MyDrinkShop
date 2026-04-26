@@ -7,7 +7,7 @@ import drinkshop.domain.TipBautura;
 public class FileProductRepository
         extends FileAbstractRepository<Integer, Product> {
 
-    // C11: Errors are made in writing out variable names (Magic Numbers)
+    // C11: Errors are made in writing out variable names
     // Observatie: Folosim constante pentru a clarifica semnificatia indicilor CSV
     private static final int IDX_ID = 0;
     private static final int IDX_NAME = 1;

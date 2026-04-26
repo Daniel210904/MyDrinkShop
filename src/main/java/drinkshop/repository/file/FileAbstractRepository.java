@@ -24,7 +24,7 @@ public abstract class FileAbstractRepository<ID, E>
 
         } catch (IOException e) {
             // C08: Error message processing errors exist
-            // Observatie: Inlocuim printStackTrace cu o exceptie care propaga eroarea critică
+            // Observatie: Inlocuim printStackTrace cu o exceptie care propaga eroarea critica
             throw new RuntimeException("Eroare critica la citirea fisierului: " + fileName, e);
         }
     }
